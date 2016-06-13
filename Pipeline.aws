@@ -1,0 +1,12 @@
+[Version]
+Version=9.1
+[Designs]
+mips=.\mips\mips.adf
+[Browser]
+sort=order
+mode=none
+[Order]
+order=1
+macro=
+[Expand]
+mips=1

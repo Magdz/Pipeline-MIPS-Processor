@@ -1,0 +1,12 @@
+*.mgf
+*.lib~mips
+mips/elaboration.log
+mips/mips.LIB
+mips/compile
+mips/log
+mips/mips.wsp
+mips/stimulators.set
+mips/mips.wsp
+mips/compile.cfg
+mips/src/wave.asdbw
+mips/src/wave.asdb
