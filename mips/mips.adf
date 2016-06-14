@@ -32,6 +32,7 @@ ON_SERVERFARM_IMPL=0
 ON_SERVERFARM_SIM=0
 DVM_DISPLAY=NO
 FAMILY=<none>
+fileopenfolder=C:\My_Designs\Pipeline-MIPS-Processor\mips\src
 
 [LocalVerilogSets]
 EnableSLP=1
@@ -52,3 +53,15 @@ SortInfo=u
 HierarchyInformation=
 ShowHide=ShowTopLevel
 Selected=
+
+[Files]
+/ALUDec.vhd=-1
+/Controller.vhd=-1
+/ControlUnit.vhd=-1
+/HazardUnit.vhd=-1
+
+[Files.Data]
+.\src\ALUDec.vhd=VHDL Source Code
+.\src\Controller.vhd=VHDL Source Code
+.\src\ControlUnit.vhd=VHDL Source Code
+.\src\HazardUnit.vhd=VHDL Source Code

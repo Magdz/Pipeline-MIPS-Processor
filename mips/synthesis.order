@@ -1,0 +1,3 @@
+i<>.\src\ALUDec.vhd
+i<>.\src\ControlUnit.vhd
+i<>.\src\HazardUnit.vhd
