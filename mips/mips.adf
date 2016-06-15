@@ -32,7 +32,7 @@ ON_SERVERFARM_IMPL=0
 ON_SERVERFARM_SIM=0
 DVM_DISPLAY=NO
 FAMILY=<none>
-fileopenfolder=C:\My_Designs\Pipeline-MIPS-Processor\mips\src
+fileopenfolder=C:\Users\Mohamed Amgad\Documents\GitHub\Pipeline-MIPS-Processor\mips\src
 
 [LocalVerilogSets]
 EnableSLP=1
@@ -55,13 +55,38 @@ ShowHide=ShowTopLevel
 Selected=
 
 [Files]
+/ALU.vhd=-1
 /ALUDec.vhd=-1
 /Controller.vhd=-1
 /ControlUnit.vhd=-1
+/DecodeLatch.vhd=-1
+/ExecuteLatch.vhd=-1
 /HazardUnit.vhd=-1
+/Latch.vhd=-1
+/MainDec.vhd=-1
+/MemoryLatch.vhd=-1
+/Mux2.vhd=-1
+/Mux4.vhd=-1
+/Shifter32.vhd=-1
+/Signext.vhd=-1
+/DataPath.vhd=-1
+/Adder.vhd=-1
 
 [Files.Data]
+.\src\ALU.vhd=VHDL Source Code
 .\src\ALUDec.vhd=VHDL Source Code
 .\src\Controller.vhd=VHDL Source Code
 .\src\ControlUnit.vhd=VHDL Source Code
+.\src\DecodeLatch.vhd=VHDL Source Code
+.\src\ExecuteLatch.vhd=VHDL Source Code
 .\src\HazardUnit.vhd=VHDL Source Code
+.\src\Latch.vhd=VHDL Source Code
+.\src\MainDec.vhd=VHDL Source Code
+.\src\MemoryLatch.vhd=VHDL Source Code
+.\src\Mux2.vhd=VHDL Source Code
+.\src\Mux4.vhd=VHDL Source Code
+.\src\Shifter32.vhd=VHDL Source Code
+.\src\Signext.vhd=VHDL Source Code
+.\src\DataPath.vhd=VHDL Source Code
+.\src\Adder.vhd=VHDL Source Code
+

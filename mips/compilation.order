@@ -1,4 +1,16 @@
+.\src\ALU.vhd
 .\src\ALUDec.vhd
 .\src\Controller.vhd
 .\src\ControlUnit.vhd
+.\src\DecodeLatch.vhd
+.\src\ExecuteLatch.vhd
 .\src\HazardUnit.vhd
+.\src\Latch.vhd
+.\src\MainDec.vhd
+.\src\MemoryLatch.vhd
+.\src\Mux2.vhd
+.\src\Mux4.vhd
+.\src\Shifter32.vhd
+.\src\Signext.vhd
+.\src\DataPath.vhd
+.\src\Adder.vhd
