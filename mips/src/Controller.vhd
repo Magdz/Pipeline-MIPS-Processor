@@ -13,7 +13,7 @@ entity Controller is
 	
 	--Execute Stage Output
 	RegDstE, ALUSrcE: out std_logic;
-	ALUControlE: out std_logic_vector(2 downto 1);
+	ALUControlE: out std_logic_vector(2 downto 0);
 	
 	--Memory Stage Output
 	MemWriteM: out std_logic;

@@ -8,7 +8,7 @@ entity DataPath is
 	-- Inputs from Controller
 	PCSrcD,RegDstE,AluSrcE,MemWriteM,MemtoRegW,RegWriteW: in STD_logic;
 	-- Inputs from Hazard Unit
-	StallF,StallD,ForwardAD,ForawrdAB,FlushE : in STD_logic;
+	StallF,StallD,ForwardAD,ForawrdBD,FlushE : in STD_logic;
 	ForwardAE,ForwardBE : in STD_logic_vector(1 downto 0);
 	-- Outputs to Hazard Unit
 	RsE: buffer std_Logic_vector(4 downto 0);
@@ -22,9 +22,8 @@ entity DataPath is
 	AluOutM: buffer STD_Logic_vector(31 downto 0);
 	WriteDataM: buffer STD_Logic_vector(31 downto 0) ;
 	RsD,RtD: buffer STD_logic_vector(4 downto 0);
-	RdD: in STD_logic_vector(4 downto 0);
 	-- Input From Instruction Memory
-	ImemRD: out STD_logic_vector (31 downto 0) 	 
+	InstrRD: in STD_logic_vector (31 downto 0) 	 
 	);	
 	
 end;				   			   
@@ -132,7 +131,8 @@ signal writeReg: std_logic_vector (4 downto 0);
 signal regInput: std_logic_vector (31 downto 0);   
 signal RD1, RD2,WD3: std_logic_vector (31 downto 0); 
 signal instrD: std_logic_vector (31 downto 0);
-signal A1,A2,A3: std_logic_vector(4 downto 0); 
+signal A1,A2,A3: std_logic_vector(4 downto 0); 	 
+signal RdD: std_logic_vector (4 downto 0);
 
 --Execute Stage Signals
 signal RD1E, RD2E: std_logic_vector(31 downto 0);  
@@ -146,9 +146,8 @@ signal WriteRegM: std_logic_vector(4 downto 0);
 --WriteBack Stage Signals
 signal ResultW, ReadDataW,ALUOutW: std_logic_vector(31 downto 0);	 
 
-
 						
-begin 
+begin
 	
 	--Execute Stage
 	srcAMux4E:	 Mux4 generic map (32) port map (ForwardAE, RD1E, ResultW, ALUoutM, x"00000000", srcAE);
