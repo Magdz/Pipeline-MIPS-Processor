@@ -12,7 +12,7 @@ Port(
 A: in STD_LOGIC_VECTOR(31 downto 0);	--input A	  
 B: in STD_LOGIC_VECTOR(31 downto 0);  	--input B
 C: in STD_LOGIC_VECTOR(2 downto 0);	 --control 
-Z: out STD_LOGIC :='0';			  --zero
+--Z: out STD_LOGIC :='0';			  --zero not needed in pipeline
 AluOut: out STD_LOGIC_VECTOR (31 downto 0));
 end ALU;
 
@@ -33,16 +33,10 @@ begin
 	CONV_STD_LOGIC_VECTOR(X - Y, 32) when C = "110" else	  
 	CONV_STD_LOGIC_VECTOR(1, 32) when A < B and C = "111" else
 	CONV_STD_LOGIC_VECTOR(0, 32) when A >= B and C = "111" ;
-
-		
- 
-
-
 	
-Z <= '1' when  CONV_INTEGER(Result) = 0 else
-					'0' ;	 
+	--Z <= '1' when  CONV_INTEGER(Result) = 0 else	'0' ;	 
 			 
-		   AluOut<=Result;
+	AluOut<=Result;
 						
 end Behavioral;
 
