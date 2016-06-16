@@ -15,7 +15,7 @@ architecture behave of MemoryLatch is
 begin
         process(clk)
         begin
-        if (clk='1') then
+        if (clk'event and clk='1') then
 		RegWriteW   <= RegWriteM;
 		MemtoRegW  <= MemtoRegM;
         end if;

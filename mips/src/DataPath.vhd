@@ -24,7 +24,7 @@ entity DataPath is
 	RsD,RtD: buffer STD_logic_vector(4 downto 0);
 	-- Input From Instruction Memory
 	InstrRD: in STD_logic_vector (31 downto 0); 	 
-	PCF: out STD_logic_vector(31 downto 0)
+	PCF: buffer STD_logic_vector(31 downto 0)
 	);	
 	
 end;				   			   
@@ -90,14 +90,12 @@ end component;
 
 
 component LatchD  
-	
-generic(width: integer);
-port(
-clk, reset: in STD_LOGIC;	 
-en: in std_logic;
-d1,d2: in STD_LOGIC_VECTOR(width-1 downto 0);
-q1,q2: out STD_LOGIC_VECTOR(width-1 downto 0));
-	end component;
+	port(
+	clk, reset: in STD_LOGIC;	 
+	en: in std_logic;
+	d1,d2: in STD_LOGIC_VECTOR(31 downto 0);
+	q1,q2: out STD_LOGIC_VECTOR(31 downto 0));
+end component;
 	
 
 
@@ -178,18 +176,21 @@ signal WriteDataE, signImmE: std_logic_vector(31 downto 0);
 signal ALUOutE: std_logic_vector(31 downto 0);
 signal RdE, WriteRegE: std_logic_vector(4 downto 0);	
 signal WriteRegM: std_logic_vector(4 downto 0);
-
+signal notstallF, notStallD: std_logic;
 --WriteBack Stage Signals
 signal ResultW, ReadDataW,ALUOutW: std_logic_vector(31 downto 0);	 
 
 						
-begin 
+begin 				   
+	notstallF <= not stallF; 
 	--Fetch Stage
 	PCMux : Mux2 Generic map (32) port map (PCSrcD,PCPlus4F,PCBranchD,PC);
-	PCLatch :Latch generic map (32) port map(clk,'0',StallF,PC,PCF);
-	AdderF :  Adder port map (PCF,x"00000004",PCPlus4F);
+	PCLatch: Latch generic map (32) port map (clk, notstallF, '1', PC, PCF); 
+	PCAdder: Adder port map (PCF, x"00000004", PCPlus4F);
+	
 	
 	--Decode Stage
+	notStallD <= not StallD;
 	A1<= InstrD(25 downto 21);
 	A2<= InstrD(20 downto 16);
 	A3<= WriteRegW(4 downto 0);
@@ -202,7 +203,7 @@ begin
 	Equ: Equator port map (EqSrcA,EqSrcB,EqualD); 
 	Reg_File: RegFile port map (clk,WE3,A1,A2,A3,WD3,RD1,RD2);
 	Sign_Extend: Signext port map (SignExIn,SignImmD);	
-	Latch_Decode: LatchD generic map (32) port map (clk,reset,StallD,InstrRD,PCPlus4F,InstrD,PCPlus4D);
+	Latch_Decode: LatchD port map (clk,reset,StallD,InstrRD,PCPlus4F,InstrD,PCPlus4D);
 	Shifter: Shifter32 port map (SignImmD,AdderSrcA);
 	AdderD: Adder port map (AdderSrcA,PCPlus4D,PCBranchD);
 	

@@ -111,24 +111,39 @@ begin
 	cont: Controller port map (clk, reset, op, funct, EqualD, PCSrcD, RegDstE, ALUSrcE,
 	ALUControlE,MemWriteM,RegWriteW, MemtoRegW);
 	
-	dp: DataPath port map (
-	clk, reset,	PCSrcD, RegDstE, AluSrcE,
-	MemWriteM, MemtoRegW, RegWriteW, StallF,
-	StallD, ForwardAD, ForwardBD, FlushE,
-	ForwardAE, ForwardBE, RsE, RtE, ALUControlE, 
-	WriteRegW, DataRD, AluOutM,
-	WriteDataM, RsD, RtD, InstrRD);
+	process begin
+		op <="000000";
+		wait;
+	end process;
 	
-	Hazunit: HazardUnit port map(
-	RegWriteW, RegWriteM,rsE, rtE, WriteRegM, WriteRegW,ForwardBE, ForwardAE,
-	MemtoRegE,rsD,  rtD,
-	FlushE, StallD, StallF,	
-	ForwardAD, ForwardBD,			
-	RegWriteE, MemtoRegM,
-	WriteRegE,
-	branchD,
-	branchStall
-	);
+	process begin
+		funct <= "100000" ;
+		wait;
+	end process;
+	
+	process begin
+		EqualD <= '0';
+		wait;
+	end process;
+	
+	--dp: DataPath port map (
+	--clk, reset,	PCSrcD, RegDstE, AluSrcE,
+	--MemWriteM, MemtoRegW, RegWriteW, StallF,
+	--StallD, ForwardAD, ForwardBD, FlushE,
+	--ForwardAE, ForwardBE, RsE, RtE, ALUControlE, 
+	--WriteRegW, DataRD, AluOutM,
+	--WriteDataM, RsD, RtD, InstrRD);
+	
+	--Hazunit: HazardUnit port map(
+	--RegWriteW, RegWriteM,rsE, rtE, WriteRegM, WriteRegW,ForwardBE, ForwardAE,
+	--MemtoRegE,rsD,  rtD,
+	--FlushE, StallD, StallF,	
+	--ForwardAD, ForwardBD,			
+	--RegWriteE, MemtoRegM,
+	--WriteRegE,
+	--branchD,
+	--branchStall
+	--);
 	
 end;
 

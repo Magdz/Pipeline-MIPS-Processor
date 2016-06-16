@@ -11,6 +11,7 @@ end;
 
 architecture behave of imem is
 type ramtype is array (63 downto 0) of std_logic_vector(31 downto 0);  -- 64 x 32 wide Ram (2KB)--
+signal MemI: ramtype;
 begin		  
 	process is
 	File mem_file: TEXT;
@@ -41,6 +42,7 @@ begin
 			index := index + 1;
 		end loop;
 		FILE_CLOSE(mem_file);
+		MemI <= mem;
 		
 		loop 
 			rd <= mem(conv_integer(A));

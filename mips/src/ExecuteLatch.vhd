@@ -15,7 +15,7 @@ architecture behave of ExecuteLatch is
 begin
         process(clk)
         begin
-        if (clk='1') then
+        if (clk'event and clk='1') then
 		RegWriteM   <= RegWriteE;
 		MemtoRegM  <= MemtoRegE;
 		MemWriteM   <= MemWriteE;

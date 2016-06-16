@@ -7,7 +7,7 @@ entity ControlUnit is
 	op,funct: in std_logic_vector(5 downto 0);	
 
 	--Ouput
-	RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,PCSrcD: out std_logic;	 
+	RegWriteD, MemtoRegD, MemWriteD, ALUSrcD, RegDstD, BranchD: out std_logic;	 
 	ALUControlD: out std_logic_vector(2 downto 0)
 	); 
 end;						   
@@ -36,12 +36,10 @@ port(
 end component;	 
 
 --Control Unit Internal Signals
-signal 	RegWrite, MemToReg, MemWrite, ALUSrc, RegDst, Branch: std_logic;
 signal ALUOp: std_logic_vector (1 downto 0);   
-signal ALUControl: std_logic_vector(2 downto 0);	
 
 begin	
 --Mapping	   
-MainDecoder: MainDec port map (funct,RegWrite, MemToReg, MemWrite, ALUSrc, RegDst, Branch,ALUOp); 
-ALUDecoder: ALUDec port map (funct, ALUOp,ALUControl);
+MainDecoder: MainDec port map (op ,RegWriteD, MemToRegD, MemWriteD, ALUSrcD, RegDstD, BranchD, ALUOp); 
+ALUDecoder: ALUDec port map (funct, ALUOp, ALUControlD);
 end;

@@ -30,7 +30,7 @@ port(
 op,funct: in std_logic_vector(5 downto 0);	
 
 --Ouput
-RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,PCSrcD: out std_logic;	 
+RegWriteD, MemtoRegD, MemWriteD, ALUSrcD, RegDstD, BranchD: out std_logic;	 
 ALUControlD: out std_logic_vector(2 downto 0)
 );
 end component;
@@ -79,9 +79,12 @@ begin
 PCSrcD <= BranchD and EqualD;
 
 --Mappings
-cu: ControlUnit port map (op, funct, RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,PCSrcD,ALUControlD);
-dlatch: DecodeLatch port map(clk,RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,ALUControlD,RegWriteE,MemtoRegE,MemWriteE, ALUSrcE,RegDstE);
+cu: ControlUnit port map (op, funct, RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD, BranchD, ALUControlD);
+dlatch: DecodeLatch port map(clk,RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,ALUControlD
+								,RegWriteE,MemtoRegE,MemWriteE, ALUSrcE,RegDstE, ALUControlE);
 elatch: ExecuteLatch port map(clk,RegWriteE,MemtoRegE,MemWriteE,RegWriteM,MemtoRegM,MemWriteM);
 mlatch: MemoryLatch port map(clk,RegWriteM,MemtoRegM,RegWriteW,MemtoRegW);
+
+PCSrcD <= BranchD and EqualD;
 
 end;

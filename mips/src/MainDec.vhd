@@ -2,7 +2,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity MainDec is
-
 	port(	   
 	--Input
 	op: in std_logic_vector (5 downto 0);	
