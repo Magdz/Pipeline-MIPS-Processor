@@ -4,7 +4,7 @@ use IEEE.std_logic_1164.all;
 
 entity LatchW is
 	port(	  
-	clk : in std_logic;
+	reset, clk : in std_logic;
 	RD: in std_logic_vector(31 downto 0);
 	WriteDataM: in std_logic_vector(31 downto 0);
 	WriteRegM: in std_logic_vector(4 downto 0);

@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_ARITH.all;
 
 entity LatchM is
 port(
-	clk: in STD_LOGIC;	 
+	reset, clk: in STD_LOGIC;	 
 	
 	ALUOutE: in std_logic_vector(31 downto 0);
 	WriteDataE: in STD_LOGIC_VECTOR(31 downto 0);

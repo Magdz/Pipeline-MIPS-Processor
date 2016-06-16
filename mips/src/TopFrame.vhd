@@ -48,9 +48,9 @@ signal InstrRD: std_Logic_vector (31 downto 0);
 
 
 begin
-	--instmem: Imem port map (PCF, InstrRD);
+	instmem: Imem port map (PCF, InstrRD);
 	mps    : Mips port map (clk, reset, PCF, InstrRD, ALUOutM, WriteDataM, dataRd, WE);
-	--datamem: Dmem port map (clk, WE, ALUOutM, dataRD, WriteDataM); 
+	datamem: Dmem port map (clk, WE, ALUOutM, dataRD, WriteDataM); 
 	
 	WD <= WriteDataM;
 	Adr <= ALUOutM;

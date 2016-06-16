@@ -27,7 +27,7 @@ end;
 
 architecture behave of HazardUnit is			   
 --Lw Stall Signal
-signal lwStall:  std_logic;	
+signal lwStall: std_logic;	
 signal s1, s2: std_logic;
 
 --Decode Stage Forwarding
@@ -37,9 +37,10 @@ signal s5, s6: std_logic;
 --Stall Detection Logic
 signal s7, s8: std_logic;
 signal s9, s10: std_logic;
-begin															 
+
+begin
 	-- Forwarding Logic
-	process(RegWriteW,RegWriteM)  
+	process(RegWriteW, RegWriteM)  
 	begin	
 		--Forward to SrcA
 		if (rsE /= x"00" and rsE = writeRegM and RegWriteM = '1')  then	--Forward from Memory
@@ -62,8 +63,8 @@ begin
 	-- Instruction then must be stalled by clearing both the decode and execute stage
 
 	s1 <= '1' when rsD = rtE else '0';
-	s2 <= '1' when rtD = rtE else '0'; 
-	lwStall <= (s1 or s2) and MemtoRegE;
+	s2 <= '1' when rtD = rtE else '0';
+	lwStall <= '0' when MemtoRegE = '-' else (s1 or s2) and MemtoRegE;
 	StallF <= lwStall;
 	StallD <= lwStall;
 	FlushE <= lwStall;

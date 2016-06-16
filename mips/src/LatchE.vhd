@@ -6,11 +6,14 @@ use IEEE.STD_LOGIC_ARITH.all;
 
 entity LatchE is
 	port(
-		clk, clr: in STD_LOGIC;	 
+		reset, clk, clr: in STD_LOGIC;	 
 		RD1D,RD2D: in STD_LOGIC_VECTOR(31 downto 0);
 		RD1E,RD2E: out STD_LOGIC_VECTOR(31 downto 0);	 
 		RsD,RtD,RdD: in STD_LOGIC_VECTOR(4 downto 0);		  
-		RsE,RtE,RdE: out STD_LOGIC_VECTOR(4 downto 0));
+		RsE,RtE,RdE: out STD_LOGIC_VECTOR(4 downto 0);
+		SignImmD: in STD_logic_vector(31 downto 0);
+		signImmE: out STD_logic_vector(31 downto 0)
+		);
 end;
 architecture async of LatchE is
 begin
@@ -21,12 +24,14 @@ begin
 			RsE  <=	CONV_STD_LOGIC_VECTOR(0, 5);
 			RtE  <=	CONV_STD_LOGIC_VECTOR(0, 5);
 			RdE  <=	CONV_STD_LOGIC_VECTOR(0, 5);
+			signImmE <= x"00000000";
 		elsif rising_edge(clk) then
 			RD1E <= RD1D;
 			RD2E <= RD2D;
 			RsE  <=	RsD;
 			RtE  <=	RtD;
-			RdE  <=	RdD;	
+			RdE  <=	RdD;
+			signImmE <= SignImmD;
 		 end if;
 	end process; 
 end;

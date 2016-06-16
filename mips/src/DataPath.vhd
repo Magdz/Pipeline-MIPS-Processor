@@ -24,7 +24,9 @@ entity DataPath is
 	RsD,RtD: buffer STD_logic_vector(4 downto 0);
 	-- Input From Instruction Memory
 	InstrRD: in STD_logic_vector (31 downto 0); 	 
-	PCF: buffer STD_logic_vector(31 downto 0)
+	PCF: buffer STD_logic_vector(31 downto 0);
+	-- Output to Controller
+	op, funct: out STD_logic_vector (5 downto 0)
 	);	
 	
 end;				   			   
@@ -91,7 +93,7 @@ end component;
 
 component LatchD  
 	port(
-	clk, reset: in STD_LOGIC;	 
+	clk, reset, clr: in STD_LOGIC;	 
 	en: in std_logic;
 	d1,d2: in STD_LOGIC_VECTOR(31 downto 0);
 	q1,q2: out STD_LOGIC_VECTOR(31 downto 0));
@@ -101,16 +103,19 @@ end component;
 
 component LatchE 
 	port(
-		clk, clr: in STD_LOGIC;	 
+		reset, clk, clr: in STD_LOGIC;	 
 		RD1D,RD2D: in STD_LOGIC_VECTOR(31 downto 0);
 		RD1E,RD2E: out STD_LOGIC_VECTOR(31 downto 0);	 
 		RsD,RtD,RdD: in STD_LOGIC_VECTOR(4 downto 0);		  
-		RsE,RtE,RdE: out STD_LOGIC_VECTOR(4 downto 0));
+		RsE,RtE,RdE: out STD_LOGIC_VECTOR(4 downto 0);
+		SignImmD: in STD_logic_vector(31 downto 0);
+		signImmE: out STD_logic_vector(31 downto 0)
+		);
 end component;
 
 component LatchM
 	port(
-	clk: in STD_LOGIC;	 
+	reset, clk: in STD_LOGIC;	 
 	
 	ALUOutE: in std_logic_vector(31 downto 0);
 	WriteDataE: in STD_LOGIC_VECTOR(31 downto 0);
@@ -123,8 +128,8 @@ component LatchM
 end component;
 
 component LatchW 
-		port(	  
-	clk : in std_logic;
+	port(	  
+	reset, clk: in std_logic;
 	RD: in std_logic_vector(31 downto 0);
 	WriteDataM: in std_logic_vector(31 downto 0);
 	WriteRegM: in std_logic_vector(4 downto 0);
@@ -133,16 +138,17 @@ component LatchW
 	ALUOutW: out std_logic_vector(31 downto 0);
 	WriteRegW: buffer std_logic_vector(4 downto 0)
 	);
-end component; 
+end component;
+
 component RegFile
-		 port( 
+	port( 
 	clk, we3: in std_logic;
 	ra1, ra2 : in std_logic_vector (4 downto 0); -- Read Address Port
 	wa3 : in std_logic_vector(4 downto 0);	   -- Write Address Port
 	wd3 : in std_logic_vector (31 downto 0);
 	rd1, rd2 : out std_logic_vector(31 downto 0)
 	);				
-	end component;
+end component;
 
 
 --Signals___________________________________________
@@ -170,7 +176,6 @@ signal WE3: Std_logic;
 signal EqualD: Std_logic;
 --Execute Stage Signals
 signal RD1E, RD2E: std_logic_vector(31 downto 0);  
-signal RD1D, RD2D: std_logic_vector(31 downto 0);
 signal srcAE, srcBE: std_logic_vector(31 downto 0);
 signal WriteDataE, signImmE: std_logic_vector(31 downto 0);	 
 signal ALUOutE: std_logic_vector(31 downto 0);
@@ -181,13 +186,12 @@ signal notstallF, notStallD: std_logic;
 signal ResultW, ReadDataW,ALUOutW: std_logic_vector(31 downto 0);	 
 
 						
-begin 				   
+begin
 	notstallF <= not stallF; 
 	--Fetch Stage
 	PCMux : Mux2 Generic map (32) port map (PCSrcD,PCPlus4F,PCBranchD,PC);
-	PCLatch: Latch generic map (32) port map (clk, notstallF, '1', PC, PCF); 
+	PCLatch: Latch generic map (32) port map (clk, reset,notstallF, PC, PCF); 
 	PCAdder: Adder port map (PCF, x"00000004", PCPlus4F);
-	
 	
 	--Decode Stage
 	notStallD <= not StallD;
@@ -203,13 +207,12 @@ begin
 	Equ: Equator port map (EqSrcA,EqSrcB,EqualD); 
 	Reg_File: RegFile port map (clk,WE3,A1,A2,A3,WD3,RD1,RD2);
 	Sign_Extend: Signext port map (SignExIn,SignImmD);	
-	Latch_Decode: LatchD port map (clk,reset,StallD,InstrRD,PCPlus4F,InstrD,PCPlus4D);
+	Latch_Decode: LatchD port map (clk,reset,PCSrcD,notStallD,InstrRD,PCPlus4F,InstrD,PCPlus4D);
 	Shifter: Shifter32 port map (SignImmD,AdderSrcA);
 	AdderD: Adder port map (AdderSrcA,PCPlus4D,PCBranchD);
 	
-	
-	
-	
+	op <= InstrD(31 downto 26);
+	funct <= InstrD(5 downto 0);
 	
 	--Execute Stage
 	srcAMux4E:	 Mux4 generic map (32) port map (ForwardAE, RD1E, ResultW, ALUoutM, x"00000000", srcAE);
@@ -217,18 +220,13 @@ begin
 	srcBMux2E: 	 Mux2 generic map (32) port map (ALUSrcE, WriteDataE, signImmE, srcBE);
 	ALUCompE : 	 ALU  port map (srcAE, srcBE, ALUControlE, ALUOutE);
 	RegDstMux2E: Mux2 generic map (5) port map (RegDstE,RtE,RdE, WriteRegE);
-	ExecLatch: 	 LatchE port map (clk, FlushE, RD1D, RD2D, RD1E, RD2E, RsD, RtD, RdD, RsE, RtE, RdE);
+	ExecLatch: 	 LatchE port map (reset, clk, FlushE, RD1, RD2, RD1E, RD2E, RsD, RtD, RdD, RsE, RtE, RdE, SignImmD, signImmE);
 	
 	--Memory Stage
-	MemLatch:    LatchM port map (clk, ALUOutE, WriteDataE, WriteRegE, ALUOutM, WriteDataM, WriteRegM);
+	MemLatch:    LatchM port map (reset, clk, ALUOutE, WriteDataE, WriteRegE, ALUOutM, WriteDataM, WriteRegM);
 	
 	--WriteBack Stage
-	WBLatch:     LatchW port map (clk, DataRD, WriteDataM, WriteRegM, ReadDataW, ALUOutW, WriteRegW);
-	ResMux2E:    Mux2 generic map (32) port map (MemtoRegW, ReadDataW, ALUOutW,ResultW);
-	
-	
-	
-	
-	
+	WBLatch:     LatchW port map (reset,clk, DataRD, WriteDataM, WriteRegM, ReadDataW, ALUOutW, WriteRegW);
+	ResMux2E:    Mux2 generic map (32) port map (MemtoRegW, ReadDataW, ALUOutW,ResultW);	
 end;
 

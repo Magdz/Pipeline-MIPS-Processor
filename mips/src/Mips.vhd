@@ -42,7 +42,9 @@ component DataPath
 	RsD,RtD: buffer STD_logic_vector(4 downto 0);
 	-- Input From Instruction Memory
 	InstrRD: in STD_logic_vector (31 downto 0); 	 
-	PCF: out STD_logic_vector(31 downto 0)
+	PCF: out STD_logic_vector(31 downto 0);
+	-- Output to Controller
+	op, funct: out STD_logic_vector (5 downto 0)
 	);
 end component;		
 
@@ -79,7 +81,7 @@ component Controller
 	PCSrcD: out std_logic;
 	
 	--Execute Stage Output
-	RegDstE, ALUSrcE: out std_logic;
+	RegDstE, ALUSrcE, MemtoRegEo: out std_logic;
 	ALUControlE: out std_logic_vector(2 downto 0);
 	
 	--Memory Stage Output
@@ -108,42 +110,31 @@ signal WriteRegE, WriteRegM: std_logic_vector(4 downto 0);
 
 signal branchD: std_logic;
 begin
-	cont: Controller port map (clk, reset, op, funct, EqualD, PCSrcD, RegDstE, ALUSrcE,
-	ALUControlE,MemWriteM,RegWriteW, MemtoRegW);
+	WE <= MemWriteM;
 	
-	process begin
-		op <="000000";
-		wait;
-	end process;
+	cont: Controller port map (clk, reset, op, funct, EqualD, PCSrcD, RegDstE, ALUSrcE, MemtoRegE,
+	ALUControlE,MemWriteM,RegWriteW, MemtoRegW
+	);
 	
-	process begin
-		funct <= "100000" ;
-		wait;
-	end process;
+	dp: DataPath port map (
+	clk, reset, PCSrcD, RegDstE, AluSrcE,
+	MemWriteM, MemtoRegW, RegWriteW, StallF,
+	StallD, ForwardAD, ForwardBD, FlushE,
+	ForwardAE, ForwardBE, RsE, RtE, ALUControlE, 
+	WriteRegW, DataRD, AluOutM,
+	WriteDataM, RsD, RtD, InstrRD, PCF, op, funct
+	);
 	
-	process begin
-		EqualD <= '0';
-		wait;
-	end process;
-	
-	--dp: DataPath port map (
-	--clk, reset,	PCSrcD, RegDstE, AluSrcE,
-	--MemWriteM, MemtoRegW, RegWriteW, StallF,
-	--StallD, ForwardAD, ForwardBD, FlushE,
-	--ForwardAE, ForwardBE, RsE, RtE, ALUControlE, 
-	--WriteRegW, DataRD, AluOutM,
-	--WriteDataM, RsD, RtD, InstrRD);
-	
-	--Hazunit: HazardUnit port map(
-	--RegWriteW, RegWriteM,rsE, rtE, WriteRegM, WriteRegW,ForwardBE, ForwardAE,
-	--MemtoRegE,rsD,  rtD,
-	--FlushE, StallD, StallF,	
-	--ForwardAD, ForwardBD,			
-	--RegWriteE, MemtoRegM,
-	--WriteRegE,
-	--branchD,
-	--branchStall
-	--);
+	Hazunit: HazardUnit port map(
+	RegWriteW, RegWriteM,rsE, rtE, WriteRegM, WriteRegW,ForwardBE, ForwardAE,
+	MemtoRegE,rsD,  rtD,
+	FlushE, StallD, StallF,	
+	ForwardAD, ForwardBD,			
+	RegWriteE, MemtoRegM,
+	WriteRegE,
+	branchD,
+	branchStall
+	);
 	
 end;
 

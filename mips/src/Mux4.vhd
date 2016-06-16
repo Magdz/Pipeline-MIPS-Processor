@@ -13,8 +13,8 @@ end	;
 
 architecture behave of MUX4 is
 begin
-	output <= in0 when selector =  "00";
-	output <= in1 when selector =  "01";
-	output <= in2 when selector =  "10";
-	output <= in3 when selector =  "11";
+	output <= in0 when selector =  "00" else
+	in1 when selector = "01" else
+	in2 when selector = "10" else
+	in3 when selector = "11";
 end	;

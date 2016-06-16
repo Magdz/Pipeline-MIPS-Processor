@@ -12,7 +12,7 @@ entity Controller is
 	PCSrcD: out std_logic;
 	
 	--Execute Stage Output
-	RegDstE, ALUSrcE: out std_logic;
+	RegDstE, ALUSrcE, MemtoRegEo: out std_logic;
 	ALUControlE: out std_logic_vector(2 downto 0);
 	
 	--Memory Stage Output
@@ -70,8 +70,9 @@ RegWriteW,MemtoRegW: out std_logic
 end component;			
 
 --Internal Signals
-signal BranchD, RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,MemtoRegE,MemWriteE,RegWriteM,MemtoRegM,RegWriteE: std_logic;	 
+signal BranchD, RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,MemWriteE,RegWriteM,MemtoRegM,RegWriteE: std_logic;	 
 signal ALUControlD: std_logic_vector(2 downto 0);
+signal MemtoRegE: STD_logic:='1';
 
 begin		
 	
@@ -85,6 +86,6 @@ dlatch: DecodeLatch port map(clk,RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,
 elatch: ExecuteLatch port map(clk,RegWriteE,MemtoRegE,MemWriteE,RegWriteM,MemtoRegM,MemWriteM);
 mlatch: MemoryLatch port map(clk,RegWriteM,MemtoRegM,RegWriteW,MemtoRegW);
 
-PCSrcD <= BranchD and EqualD;
+MemtoRegEo <= MemtoRegE;
 
 end;
