@@ -57,6 +57,10 @@ component Mux4
 	output: out STD_LOGIC_VECTOR (width-1 downto 0)
 	);
 end component;
+component Equator
+	port(a, b: in  STD_LOGIC_VECTOR(31 downto 0); y: out STD_LOGIC); 
+	end component;
+
 component Shifter32 	
 Port(
 inp: in STD_LOGIC_VECTOR(31 downto 0);
@@ -83,8 +87,7 @@ component Adder
 	y: out STD_LOGIC_VECTOR(31 downto 0)); 
 end component;
 
-component equator 
-end component;
+
 
 component LatchD  
 	
@@ -196,6 +199,7 @@ begin
 	SignExIn<= InstrD(15 downto 0);
 	MuxD1: 	    Mux2 generic map (32) port map (ForwardAD, RD1, ALUOutM, EqSrcA); 
 	MuxD2:     	  Mux2 generic map (32) port map (ForwardAD, RD2, ALUOutM, EqSrcA); 
+	Equ: Equator port map (EqSrcA,EqSrcB,EqualD); 
 	Reg_File: RegFile port map (clk,WE3,A1,A2,A3,WD3,RD1,RD2);
 	Sign_Extend: Signext port map (SignExIn,SignImmD);	
 	Latch_Decode: LatchD generic map (32) port map (clk,reset,StallD,InstrRD,PCPlus4F,InstrD,PCPlus4D);
