@@ -2,7 +2,9 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 
 entity TopFrame	is
-	port(clk, reset	: in std_logic
+	port(clk, reset	: in std_logic;
+	MemWrite: buffer STD_logic;
+	Adr, WD: buffer STD_logic_vector(31 downto 0)
 	);
 end;
 
@@ -49,4 +51,7 @@ begin
 	instmem: Imem port map (PCF, InstrRD);
 	mps    : Mips port map (clk, reset, PCF, InstrRD, ALUOutM, WriteDataM, dataRd, WE);
 	datamem: Dmem port map (clk, WE, ALUOutM, dataRD, WriteDataM);
+	
+	WD <= WriteDataM;
+	Adr <= ALUOutM;
 end;

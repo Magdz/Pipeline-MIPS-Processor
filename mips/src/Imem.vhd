@@ -23,7 +23,7 @@ begin
 			mem(conv_integer(i)):=conv_std_logic_vector(0,32);
 		end loop;
 		index := 0;
-		FILE_OPEN(mem_file,"memfile.dat",read_mode);
+		FILE_OPEN(mem_file,"Data.txt",read_mode);
 		while not ENDFILE(mem_file) loop
 			readline(mem_file,L);
 			result := 0;

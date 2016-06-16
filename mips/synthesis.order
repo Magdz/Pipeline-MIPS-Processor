@@ -1,16 +1,1 @@
-i<>.\src\ALUDec.vhd
-i<>.\src\ControlUnit.vhd
-i<>.\src\HazardUnit.vhd
-i<>.\src\ALU.vhd
-i<>.\src\Controller.vhd
-i<>.\src\DecodeLatch.vhd
-i<>.\src\ExecuteLatch.vhd
-i<>.\src\Latch.vhd
-i<>.\src\MainDec.vhd
-i<>.\src\MemoryLatch.vhd
-i<>.\src\Mux2.vhd
-i<>.\src\Mux4.vhd
-i<>.\src\Shifter32.vhd
-i<>.\src\Signext.vhd
-i<>.\src\DataPath.vhd
-i<>.\src\Adder.vhd
+i<>.\src\TestBench.vhd
