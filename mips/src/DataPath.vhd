@@ -23,7 +23,8 @@ entity DataPath is
 	WriteDataM: buffer STD_Logic_vector(31 downto 0) ;
 	RsD,RtD: buffer STD_logic_vector(4 downto 0);
 	-- Input From Instruction Memory
-	InstrRD: in STD_logic_vector (31 downto 0) 	 
+	InstrRD: in STD_logic_vector (31 downto 0); 	 
+	PCF: out STD_logic_vector(31 downto 0)
 	);	
 	
 end;				   			   

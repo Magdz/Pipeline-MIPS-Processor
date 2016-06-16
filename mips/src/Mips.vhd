@@ -6,15 +6,16 @@ entity Mips is
 	clk, reset: in std_logic;
 	
 	--Instruction Memory Link
-	InstrA: out std_logic_vector(31 downto 0);
+	PCF: out std_logic_vector(31 downto 0);
 	InstrRD: in std_logic_vector(31 downto 0);
 	
 	--Data Memory Link
 	DataA:  out std_logic_vector(31 downto 0);
 	WD: out std_logic_vector(31 downto 0);
 	DataRd: in std_logic_vector(31 downto 0);
-	WE: in std_logic	
-	);				 
+	WE: out std_logic
+	);				 					  
+	
 end;				 
 
 architecture struct of Mips is
@@ -40,7 +41,8 @@ component DataPath
 	WriteDataM: buffer STD_Logic_vector(31 downto 0) ;
 	RsD,RtD: buffer STD_logic_vector(4 downto 0);
 	-- Input From Instruction Memory
-	InstrRD: in STD_logic_vector (31 downto 0) 	 
+	InstrRD: in STD_logic_vector (31 downto 0); 	 
+	PCF: out STD_logic_vector(31 downto 0)
 	);
 end component;		
 
