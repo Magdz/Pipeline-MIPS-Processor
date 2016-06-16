@@ -14,7 +14,7 @@ entity DataPath is
 	RsE: buffer std_Logic_vector(4 downto 0);
 	RtE: buffer std_Logic_vector(4 downto 0);
 	ALUControlE: in STD_logic_vector (2 downto 0);
-	WriteRegW: out STD_Logic_vector (4 downto 0);
+	WriteRegW: buffer STD_Logic_vector (4 downto 0);
 	-- Inputs from Memory
 	DataRD: in STD_logic_vector (31 downto 0); 
 	
@@ -57,7 +57,12 @@ component Mux4
 	output: out STD_LOGIC_VECTOR (width-1 downto 0)
 	);
 end component;
+component Shifter32 	
+Port(
+inp: in STD_LOGIC_VECTOR(31 downto 0);
+outp: out STD_LOGIC_VECTOR (31 downto 0)
 
+); end component ;
 component Latch	
 	generic(width: integer);
 	port(
@@ -83,7 +88,15 @@ end component;
 
 component LatchD  
 	
-end component;
+generic(width: integer);
+port(
+clk, reset: in STD_LOGIC;	 
+en: in std_logic;
+d1,d2: in STD_LOGIC_VECTOR(width-1 downto 0);
+q1,q2: out STD_LOGIC_VECTOR(width-1 downto 0));
+	end component;
+	
+
 
 component LatchE 
 	port(
@@ -117,24 +130,43 @@ component LatchW
 	
 	ReadDataW: out std_logic_vector(31 downto 0);
 	ALUOutW: out std_logic_vector(31 downto 0);
-	WriteRegW: out std_logic_vector(4 downto 0)
+	WriteRegW: buffer std_logic_vector(4 downto 0)
 	);
-end component;
+end component; 
+component RegFile
+		 port( 
+	clk, we3: in std_logic;
+	ra1, ra2 : in std_logic_vector (4 downto 0); -- Read Address Port
+	wa3 : in std_logic_vector(4 downto 0);	   -- Write Address Port
+	wd3 : in std_logic_vector (31 downto 0);
+	rd1, rd2 : out std_logic_vector(31 downto 0)
+	);				
+	end component;
 
 
 --Signals___________________________________________
 signal instr: std_logic_vector (31 downto 0);
 signal data : std_logic_vector (31 downto 0);	  
-signal SrcA, SrcB, ALUResult, ALUOut : std_logic_vector  (31 downto 0);	   
+signal SrcA, SrcB, ALUResult, ALUOut : std_logic_vector  (31 downto 0);	
+--Fetch Signals
+signal PCPlus4F: std_logic_vector (31 downto 0); 
+signal PC: std_logic_vector (31 downto 0);
 
---Decode Signals 
+--Decode Signals  
+signal PCPlus4D: std_logic_vector (31 downto 0);
 signal writeReg: std_logic_vector (4 downto 0);
-signal regInput: std_logic_vector (31 downto 0);   
-signal RD1, RD2,WD3: std_logic_vector (31 downto 0); 
+signal regInput: std_logic_vector (31 downto 0);   	
+signal EqSrcA,EqSrcB: std_logic_vector (31 downto 0);   
+signal PCBranchD: std_logic_vector (31 downto 0);
+signal SignImmD: std_logic_vector (31 downto 0);
+signal RD1, RD2,WD3: std_logic_vector (31 downto 0);
+signal AdderSrcA :std_logic_vector (31 downto 0);
+signal SignExIn: std_logic_vector(15 downto 0);
 signal instrD: std_logic_vector (31 downto 0);
 signal A1,A2,A3: std_logic_vector(4 downto 0); 	 
 signal RdD: std_logic_vector (4 downto 0);
-
+signal WE3: Std_logic;
+signal EqualD: Std_logic;
 --Execute Stage Signals
 signal RD1E, RD2E: std_logic_vector(31 downto 0);  
 signal RD1D, RD2D: std_logic_vector(31 downto 0);
@@ -148,7 +180,31 @@ signal WriteRegM: std_logic_vector(4 downto 0);
 signal ResultW, ReadDataW,ALUOutW: std_logic_vector(31 downto 0);	 
 
 						
-begin
+begin 
+	--Fetch Stage
+	PCMux : Mux2 Generic map (32) port map (PCSrcD,PCPlus4F,PCBranchD,PC);
+	PCLatch :Latch generic map (32) port map(clk,'0',StallF,PC,PCF);
+	AdderF :  Adder port map (PCF,x"00000004",PCPlus4F);
+	
+	--Decode Stage
+	A1<= InstrD(25 downto 21);
+	A2<= InstrD(20 downto 16);
+	A3<= WriteRegW(4 downto 0);
+	RsD	<= InstrD(25 downto 21);
+	RtD <= InstrD(20 downto 16);
+	RdD <= InstrD(15 downto 11);
+	SignExIn<= InstrD(15 downto 0);
+	MuxD1: 	    Mux2 generic map (32) port map (ForwardAD, RD1, ALUOutM, EqSrcA); 
+	MuxD2:     	  Mux2 generic map (32) port map (ForwardAD, RD2, ALUOutM, EqSrcA); 
+	Reg_File: RegFile port map (clk,WE3,A1,A2,A3,WD3,RD1,RD2);
+	Sign_Extend: Signext port map (SignExIn,SignImmD);	
+	Latch_Decode: LatchD generic map (32) port map (clk,reset,StallD,InstrRD,PCPlus4F,InstrD,PCPlus4D);
+	Shifter: Shifter32 port map (SignImmD,AdderSrcA);
+	AdderD: Adder port map (AdderSrcA,PCPlus4D,PCBranchD);
+	
+	
+	
+	
 	
 	--Execute Stage
 	srcAMux4E:	 Mux4 generic map (32) port map (ForwardAE, RD1E, ResultW, ALUoutM, x"00000000", srcAE);
