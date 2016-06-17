@@ -33,7 +33,7 @@ begin
 				if '0' <= ch and ch<='9' then 
 					result := result*16 + character'pos(ch) - character'pos('0');
 				elsif 'a' <= ch and ch <= 'f' then
-					result := result*16 + character'pos(ch) - character'pos('a');
+					result := result*16 + character'pos(ch) - character'pos('a') + 10;
 				else
 					report "Format error on line" & integer'image(index) severity error;
 				end if;		
@@ -45,7 +45,7 @@ begin
 		MemI <= mem;
 		
 		loop 
-			rd <= mem(conv_integer(A));
+			rd <= mem(conv_integer(A(7 downto 2)));
 			wait on A;
 		end loop;		
 	end process;

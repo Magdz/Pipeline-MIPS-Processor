@@ -18,9 +18,11 @@ end;
 architecture async of LatchM is
 begin
 	process(clk)
-	begin	 
+	begin
+		if rising_edge(clk)	then
 		ALUOutM    <= ALUOutE;
 		WriteDataM <= WriteDataE;
 		WriteRegM  <= WriteRegE;
+		end if;
 	end process;
 end;

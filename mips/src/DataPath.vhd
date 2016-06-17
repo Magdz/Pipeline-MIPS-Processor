@@ -131,7 +131,7 @@ component LatchW
 	port(	  
 	reset, clk: in std_logic;
 	RD: in std_logic_vector(31 downto 0);
-	WriteDataM: in std_logic_vector(31 downto 0);
+	ALUOutM: in std_logic_vector(31 downto 0);
 	WriteRegM: in std_logic_vector(4 downto 0);
 	
 	ReadDataW: out std_logic_vector(31 downto 0);
@@ -226,7 +226,9 @@ begin
 	MemLatch:    LatchM port map (reset, clk, ALUOutE, WriteDataE, WriteRegE, ALUOutM, WriteDataM, WriteRegM);
 	
 	--WriteBack Stage
-	WBLatch:     LatchW port map (reset,clk, DataRD, WriteDataM, WriteRegM, ReadDataW, ALUOutW, WriteRegW);
-	ResMux2E:    Mux2 generic map (32) port map (MemtoRegW, ReadDataW, ALUOutW,ResultW);	
+	WBLatch:     LatchW port map (reset,clk, DataRD, ALUOutM, WriteRegM, ReadDataW, ALUOutW, WriteRegW);
+	ResMux2E:    Mux2 generic map (32) port map (MemtoRegW, ALUOutW, ReadDataW, ResultW);
+	WD3 <= ResultW;
+	WE3 <= RegWriteW;
 end;
 
