@@ -26,7 +26,8 @@ component DataPath
 	-- Inputs from Controller
 	PCSrcD,RegDstE,AluSrcE,MemWriteM,MemtoRegW,RegWriteW: in STD_logic;
 	-- Inputs from Hazard Unit
-	StallF,StallD,ForwardAD,ForawrdBD,FlushE : in STD_logic;
+	StallF,ForwardAD,ForawrdBD,FlushE : in STD_logic;
+	StallD: inout STD_LOGIC;
 	ForwardAE,ForwardBE : in STD_logic_vector(1 downto 0);
 	-- Outputs to Hazard Unit
 	RsE: buffer std_Logic_vector(4 downto 0);
@@ -58,7 +59,8 @@ port(
 	--Stalling
 	MemtoRegE: in std_logic;  
 	rsD,  rtD: in std_logic_vector(4 downto 0);
-	FlushE, StallD, StallF: out std_logic;
+	FlushE,  StallF: out std_logic;
+	StallD: inout std_logic;
 	
 	--Decode Stage Forwarding
 	ForwardAD, ForwardBD : out STD_Logic;
@@ -66,8 +68,7 @@ port(
 	--Stall Detection Logic			
 	RegWriteE, MemtoRegM: in std_logic;
 	WriteRegE: in std_logic_vector(4 downto 0);
-	branchD : in std_logic;
-	branchStall: out std_logic
+	branchD : in std_logic
 	);
 end component;
 component Controller
@@ -132,8 +133,7 @@ begin
 	ForwardAD, ForwardBD,			
 	RegWriteE, MemtoRegM,
 	WriteRegE,
-	branchD,
-	branchStall
+	branchD
 	);
 	
 end;
