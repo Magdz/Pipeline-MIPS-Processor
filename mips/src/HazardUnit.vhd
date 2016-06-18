@@ -28,15 +28,10 @@ end;
 architecture behave of HazardUnit is			   
 --Lw Stall Signal		
 signal lwStall,branchStall: std_logic;	
-signal s1, s2: std_logic;
 
 --Decode Stage Forwarding
-signal s3, s4: std_logic;
-signal s5, s6: std_logic;
 
 --Stall Detection Logic
-signal s7, s8: std_logic;
-signal s9, s10: std_logic;
 
 begin
 	-- Forwarding Logic

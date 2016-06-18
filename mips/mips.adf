@@ -50,7 +50,7 @@ UCF=
 
 [HierarchyViewer]
 SortInfo=u
-HierarchyInformation=testbench|Test|0
+HierarchyInformation=testbench|Test|0 
 ShowHide=ShowTopLevel
 Selected=
 
@@ -89,6 +89,8 @@ Selected=
 /Debug2.awc=-1
 /Debug3.asdb=-1
 /Debug3.awc=-1
+/Run1.asdb=-1
+/Run1.awc=-1
 
 [Files.Data]
 .\src\LatchM.vhd=VHDL Source Code
@@ -125,4 +127,6 @@ Selected=
 .\src\Debug2.awc=Accelerated Waveform Configuration
 .\src\Debug3.asdb=Accelerated Waveform File
 .\src\Debug3.awc=Accelerated Waveform Configuration
+.\src\Run1.asdb=Accelerated Waveform File
+.\src\Run1.awc=Accelerated Waveform Configuration
 

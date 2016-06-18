@@ -10,6 +10,7 @@ entity Controller is
 	
 	--Decode Stage Output
 	PCSrcD: out std_logic;
+	FlushE: in STd_logic;
 	
 	--Execute Stage Output
 	RegDstE, ALUSrcE, MemtoRegEo: out std_logic;
@@ -17,6 +18,7 @@ entity Controller is
 	
 	--Memory Stage Output
 	MemWriteM: out std_logic;
+	RegWriteM: buffer STD_logic;
 	
 	--Writeback Stage Output
 	RegWriteW, MemtoRegW: out std_logic
@@ -40,7 +42,7 @@ end component;
 component DecodeLatch is
 port(
 	--Input
-	clk,RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD: in std_logic;	 
+	clk, clr, RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD: in std_logic;	 
 	ALUControlD: in std_logic_vector(2 downto 0); 
 
 	--Output
@@ -70,7 +72,7 @@ RegWriteW,MemtoRegW: out std_logic
 end component;			
 
 --Internal Signals
-signal BranchD, RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,MemWriteE,RegWriteM,MemtoRegM,RegWriteE: std_logic;	 
+signal BranchD, RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,MemWriteE,MemtoRegM,RegWriteE: std_logic;	 
 signal ALUControlD: std_logic_vector(2 downto 0);
 signal MemtoRegE: STD_logic:='1';
 
@@ -81,7 +83,7 @@ PCSrcD <= BranchD and EqualD;
 
 --Mappings
 cu: ControlUnit port map (op, funct, RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD, BranchD, ALUControlD);
-dlatch: DecodeLatch port map(clk,RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,ALUControlD
+dlatch: DecodeLatch port map(clk, FlushE, RegWriteD,MemtoRegD,MemWriteD, ALUSrcD,RegDstD,ALUControlD
 								,RegWriteE,MemtoRegE,MemWriteE, ALUSrcE,RegDstE, ALUControlE);
 elatch: ExecuteLatch port map(clk,RegWriteE,MemtoRegE,MemWriteE,RegWriteM,MemtoRegM,MemWriteM);
 mlatch: MemoryLatch port map(clk,RegWriteM,MemtoRegM,RegWriteW,MemtoRegW);

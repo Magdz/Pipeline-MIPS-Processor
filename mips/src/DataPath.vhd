@@ -14,7 +14,7 @@ entity DataPath is
 	RsE: buffer std_Logic_vector(4 downto 0);
 	RtE: buffer std_Logic_vector(4 downto 0);
 	ALUControlE: in STD_logic_vector (2 downto 0);
-	WriteRegW: buffer STD_Logic_vector (4 downto 0);
+	WriteRegE, WriteRegM, WriteRegW: buffer STD_Logic_vector (4 downto 0);
 	-- Inputs from Memory
 	DataRD: in STD_logic_vector (31 downto 0); 
 	
@@ -26,6 +26,7 @@ entity DataPath is
 	InstrRD: in STD_logic_vector (31 downto 0); 	 
 	PCF: buffer STD_logic_vector(31 downto 0);
 	-- Output to Controller
+	EqualD: out STD_logic;
 	op, funct: out STD_logic_vector (5 downto 0)
 	);	
 	
@@ -173,14 +174,12 @@ signal instrD: std_logic_vector (31 downto 0);
 signal A1,A2,A3: std_logic_vector(4 downto 0); 	 
 signal RdD: std_logic_vector (4 downto 0);
 signal WE3: Std_logic;
-signal EqualD: Std_logic;
 --Execute Stage Signals
 signal RD1E, RD2E: std_logic_vector(31 downto 0);  
 signal srcAE, srcBE: std_logic_vector(31 downto 0);
 signal WriteDataE, signImmE: std_logic_vector(31 downto 0);	 
 signal ALUOutE: std_logic_vector(31 downto 0);
-signal RdE, WriteRegE: std_logic_vector(4 downto 0);	
-signal WriteRegM: std_logic_vector(4 downto 0);
+signal RdE: std_logic_vector(4 downto 0);	
 signal notstallF, notStallD: std_logic;
 --WriteBack Stage Signals
 signal ResultW, ReadDataW,ALUOutW: std_logic_vector(31 downto 0);	 
