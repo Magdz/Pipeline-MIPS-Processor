@@ -8,7 +8,7 @@ entity DataPath is
 	-- Inputs from Controller
 	PCSrcD,RegDstE,AluSrcE,MemWriteM,MemtoRegW,RegWriteW: in STD_logic;
 	-- Inputs from Hazard Unit
-	StallF,StallD,ForwardAD,ForawrdBD,FlushE : in STD_logic;
+	StallF,StallD,ForwardAD,ForwardBD,FlushE : in STD_logic;
 	ForwardAE,ForwardBE : in STD_logic_vector(1 downto 0);
 	-- Outputs to Hazard Unit
 	RsE: buffer std_Logic_vector(4 downto 0);
@@ -93,11 +93,11 @@ end component;
 
 
 component LatchD  
-	port(
-	clk, reset, clr: in STD_LOGIC;	 
-	en: in std_logic;
-	d1,d2: in STD_LOGIC_VECTOR(31 downto 0);
-	q1,q2: out STD_LOGIC_VECTOR(31 downto 0));
+port(
+	clk, reset, PCSrc: in STD_LOGIC;	 
+	notStallD: in std_logic;
+	InstrRD,PCPlus4F: in STD_LOGIC_VECTOR(31 downto 0);
+	InstrD,PCPlus4D: out STD_LOGIC_VECTOR(31 downto 0));
 end component;
 	
 
@@ -153,9 +153,9 @@ end component;
 
 
 --Signals___________________________________________
-signal instr: std_logic_vector (31 downto 0);
-signal data : std_logic_vector (31 downto 0);	  
-signal SrcA, SrcB, ALUResult, ALUOut : std_logic_vector  (31 downto 0);	
+--signal instr: std_logic_vector (31 downto 0);
+--signal data : std_logic_vector (31 downto 0);	  
+--signal SrcA, SrcB, ALUResult, ALUOut : std_logic_vector  (31 downto 0);	
 --Fetch Signals
 signal PCPlus4F: std_logic_vector (31 downto 0); 
 signal PC: std_logic_vector (31 downto 0);
@@ -202,7 +202,7 @@ begin
 	RdD <= InstrD(15 downto 11);
 	SignExIn<= InstrD(15 downto 0);
 	MuxD1: 	    Mux2 generic map (32) port map (ForwardAD, RD1, ALUOutM, EqSrcA); 
-	MuxD2:     	  Mux2 generic map (32) port map (ForwardAD, RD2, ALUOutM, EqSrcA); 
+	MuxD2:     	  Mux2 generic map (32) port map (ForwardBD, RD2, ALUOutM, EqSrcB); 
 	Equ: Equator port map (EqSrcA,EqSrcB,EqualD); 
 	Reg_File: RegFile port map (clk,WE3,A1,A2,A3,WD3,RD1,RD2);
 	Sign_Extend: Signext port map (SignExIn,SignImmD);	

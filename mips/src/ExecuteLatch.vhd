@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity ExecuteLatch is
     port(
 	--Input
-	clk,RegWriteE,MemtoRegE,MemWriteE: in std_logic;
+	clk, RegWriteE,MemtoRegE,MemWriteE: in std_logic;
 
 	--Output
 	RegWriteM,MemtoRegM,MemWriteM: out std_logic	 

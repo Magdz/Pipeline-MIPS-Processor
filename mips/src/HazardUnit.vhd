@@ -70,9 +70,9 @@ begin
 								((memtoregM = '1') and
 								((writeregM = rsD) or (writeregM = rtD)))))
 						   else '0';
-	stallD <= (lwstall or branchstall) after 1 ns;
-	stallF <= stallD after 1 ns;
-	flushE <= stallD after 1 ns;
+	stallD <= (lwstall or branchstall);
+	stallF <= stallD;
+	flushE <= stallD;
 	
 	--Decode Stage Forwarding
 	forwardaD <= '1' when ((rsD /= "00000") and (rsD = writeregM) and

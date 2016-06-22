@@ -17,7 +17,7 @@ end component;
 
 signal clk, reset, MemWrite: STD_logic;
 signal DataAdr, WriteData: STD_logic_vector(31 downto 0);
-
+signal cycle : std_logic_vector(7 downto 0):= x"01";
 begin
 	Top: TopFrame port map (clk, reset, MemWrite, DataAdr, WriteData);
 	
@@ -26,6 +26,7 @@ begin
 		wait for 5 ns;
 		clk <= '0';
 		wait for 5 ns;
+		if(reset = '0') then cycle <= cycle + "01"; end if;
 	end process;
 	
 	process begin
@@ -41,7 +42,8 @@ begin
 		if (conv_integer(DataAdr) = 84 and conv_integer(WriteData) = 7) then report "Simulation succeeded";
 		elsif (DataAdr /= 80) then report "Simulation failed";
 		end if;
-		end if;
+		end if;								
+		
 	end process;
 	
 end;	

@@ -19,9 +19,11 @@ signal mem: ram_type;
 
 begin
 	process(wd3) begin
+		--if clk'event and clk = '1' then
 		if we3 = '1'  then
 			mem(CONV_INTEGER(wa3)) <= wd3  ;	
-		end if;		   
+		end if;		   				   
+		--end if;
 	end process;
 	
 	process(ra1,ra2,clk) begin

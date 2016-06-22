@@ -16,12 +16,10 @@ signal memD: ramtype;
 begin
 
 	process(clk)
-	
 	begin
 		if (rising_edge(clk) and WE = '1') then 
 			memD(conv_integer(A(7 downto 2))) <= WD;
 		end if;
-		
 		RD <= memD(conv_integer(A(7 downto 2)));
 	end process;
 

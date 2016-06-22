@@ -18,20 +18,21 @@ end;
 architecture async of LatchE is
 begin
 	process(clk, clr) begin	 
-		if clr = '1' then 
-			RD1E <= x"00000000";
-			RD2E <= x"00000000"		;	
-			RsE  <=	CONV_STD_LOGIC_VECTOR(0, 5);
-			RtE  <=	CONV_STD_LOGIC_VECTOR(0, 5);
-			RdE  <=	CONV_STD_LOGIC_VECTOR(0, 5);
-			signImmE <= x"00000000";
-		elsif rising_edge(clk) then
-			RD1E <= RD1D;
-			RD2E <= RD2D;
-			RsE  <=	RsD;
-			RtE  <=	RtD;
-			RdE  <=	RdD;
-			signImmE <= SignImmD;
-		 end if;
+		if clk'event and clk = '1'  then
+			if clr = '1' then 
+			    RsE  <=	"-----";
+				RtE  <= "-----";
+				RdE  <=	"-----";
+				signImmE <= x"00000000"; 
+			else 
+				RD1E <= RD1D;
+				RD2E <= RD2D;
+				RsE  <=	RsD;
+				RtE  <=	RtD;
+				RdE  <=	RdD;
+				signImmE <= SignImmD;
+			end if; 
+		end if;
+		 
 	end process; 
 end;

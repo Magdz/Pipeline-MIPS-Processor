@@ -26,7 +26,7 @@ component DataPath
 	-- Inputs from Controller
 	PCSrcD,RegDstE,AluSrcE,MemWriteM,MemtoRegW,RegWriteW: in STD_logic;
 	-- Inputs from Hazard Unit
-	StallF,ForwardAD,ForawrdBD,FlushE : in STD_logic;
+	StallF,ForwardAD,ForwardBD,FlushE : in STD_logic;
 	StallD: inout STD_LOGIC;
 	ForwardAE,ForwardBE : in STD_logic_vector(1 downto 0);
 	-- Outputs to Hazard Unit
@@ -92,7 +92,8 @@ component Controller
 	RegWriteM: buffer STD_logic;
 	
 	--Writeback Stage Output
-	RegWriteW, MemtoRegW: out std_logic
+	RegWriteW, MemtoRegW: out std_logic;
+	BranchD,RegWriteE, MemtoRegM: buffer std_logic
 	);
 end component;				   
 
@@ -109,7 +110,7 @@ signal RsE, RtE, RsD, RtD: std_logic_vector(4 downto 0);
 signal ALUOutM, WriteDataM: std_logic_vector(31 downto 0); 
 signal WriteRegW: std_logic_vector(4 downto 0);		
 
-signal RegWriteM, MemtoRegE, RegWriteE,MemtoRegM,branchStall: std_logic; 
+signal RegWriteM, MemtoRegE, RegWriteE,MemtoRegM: std_logic; 
 signal WriteRegE, WriteRegM: std_logic_vector(4 downto 0);
 
 signal branchD: std_logic;
@@ -117,7 +118,7 @@ begin
 	WE <= MemWriteM;
 	
 	cont: Controller port map (clk, reset, op, funct, EqualD, PCSrcD, FlushE, RegDstE, ALUSrcE, MemtoRegE,
-	ALUControlE,MemWriteM, RegWriteM, RegWriteW, MemtoRegW
+	ALUControlE,MemWriteM, RegWriteM, RegWriteW, MemtoRegW, branchD,RegWriteE, MemtoRegM
 	);
 	
 	dp: DataPath port map (
@@ -127,17 +128,20 @@ begin
 	ForwardAE, ForwardBE, RsE, RtE, ALUControlE, 
 	WriteRegE, WriteRegM, WriteRegW, DataRD, AluOutM,
 	WriteDataM, RsD, RtD, InstrRD, PCF, EqualD, op, funct
-	);
+	);		   
 	
 	Hazunit: HazardUnit port map(
 	RegWriteW, RegWriteM,rsE, rtE, WriteRegM, WriteRegW,ForwardBE, ForwardAE,
 	MemtoRegE,rsD,  rtD,
-	FlushE, StallD, StallF,	
+	FlushE, StallF, StallD,	
 	ForwardAD, ForwardBD,			
 	RegWriteE, MemtoRegM,
 	WriteRegE,
 	branchD
 	);
+	
+	dataA <= AluOutM;  
+	WD <= WriteDataM;
 	
 end;
 
