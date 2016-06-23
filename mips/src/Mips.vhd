@@ -13,7 +13,8 @@ entity Mips is
 	DataA:  out std_logic_vector(31 downto 0);
 	WD: out std_logic_vector(31 downto 0);
 	DataRd: in std_logic_vector(31 downto 0);
-	WE: out std_logic
+	WE: out std_logic;
+	MemWriteM: buffer std_logic
 	);				 					  
 	
 end;				 
@@ -24,7 +25,8 @@ component DataPath
 	port(
 	clk, reset: in STD_logic;
 	-- Inputs from Controller
-	PCSrcD,RegDstE,AluSrcE,MemWriteM,MemtoRegW,RegWriteW: in STD_logic;
+	PCSrcD : in std_logic_vector(1 downto 0);
+	RegDstE,AluSrcE,MemWriteM,MemtoRegW,RegWriteW: in STD_logic;
 	-- Inputs from Hazard Unit
 	StallF,ForwardAD,ForwardBD,FlushE : in STD_logic;
 	StallD: inout STD_LOGIC;
@@ -69,7 +71,7 @@ port(
 	--Stall Detection Logic			
 	RegWriteE, MemtoRegM: in std_logic;
 	WriteRegE: in std_logic_vector(4 downto 0);
-	branchD : in std_logic
+	branchD , jumpD: in std_logic
 	);
 end component;
 component Controller
@@ -80,7 +82,7 @@ component Controller
 	EqualD: in std_logic;
 	
 	--Decode Stage Output
-	PCSrcD: out std_logic;
+	PCSrcD: out std_logic_vector (1 downto 0);
 	FlushE: in STD_Logic;
 	
 	--Execute Stage Output
@@ -93,16 +95,17 @@ component Controller
 	
 	--Writeback Stage Output
 	RegWriteW, MemtoRegW: out std_logic;
-	BranchD,RegWriteE, MemtoRegM: buffer std_logic
+	BranchD,RegWriteE, MemtoRegM, JumpD: buffer std_logic
 	);
 end component;				   
 
 --Controller
 signal op, funct: std_logic_vector(5 downto 0);
-signal EqualD, PCSrcD: std_logic;
+signal EqualD : std_logic;
+signal PCSrcD: std_logic_vector (1 downto 0);
 signal RegDstE, ALUSrcE: std_logic;
 signal ALUControlE: std_logic_vector(2 downto 0);
-signal MemWriteM, MemtoRegW, RegWriteW: std_logic;
+signal MemtoRegW, RegWriteW: std_logic;
 
 signal StallF, StallD, ForwardAD, ForwardBD, FlushE: std_logic;
 signal ForwardAE, ForwardBE: std_logic_vector(1 downto 0);
@@ -113,12 +116,12 @@ signal WriteRegW: std_logic_vector(4 downto 0);
 signal RegWriteM, MemtoRegE, RegWriteE,MemtoRegM: std_logic; 
 signal WriteRegE, WriteRegM: std_logic_vector(4 downto 0);
 
-signal branchD: std_logic;
+signal branchD, JumpD: std_logic;
 begin
 	WE <= MemWriteM;
 	
 	cont: Controller port map (clk, reset, op, funct, EqualD, PCSrcD, FlushE, RegDstE, ALUSrcE, MemtoRegE,
-	ALUControlE,MemWriteM, RegWriteM, RegWriteW, MemtoRegW, branchD,RegWriteE, MemtoRegM
+	ALUControlE,MemWriteM, RegWriteM, RegWriteW, MemtoRegW, branchD,RegWriteE, MemtoRegM , JumpD
 	);
 	
 	dp: DataPath port map (
@@ -137,7 +140,7 @@ begin
 	ForwardAD, ForwardBD,			
 	RegWriteE, MemtoRegM,
 	WriteRegE,
-	branchD
+	branchD, jumpD
 	);
 	
 	dataA <= AluOutM;  

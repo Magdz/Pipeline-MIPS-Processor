@@ -6,7 +6,8 @@ entity DataPath is
 	port(
 	clk, reset: in STD_logic;
 	-- Inputs from Controller
-	PCSrcD,RegDstE,AluSrcE,MemWriteM,MemtoRegW,RegWriteW: in STD_logic;
+	PCSrcD : in std_logic_vector(1 downto 0);
+	RegDstE,AluSrcE,MemWriteM,MemtoRegW,RegWriteW: in STD_logic;
 	-- Inputs from Hazard Unit
 	StallF,StallD,ForwardAD,ForwardBD,FlushE : in STD_logic;
 	ForwardAE,ForwardBE : in STD_logic_vector(1 downto 0);
@@ -64,12 +65,23 @@ component Equator
 	port(a, b: in  STD_LOGIC_VECTOR(31 downto 0); y: out STD_LOGIC); 
 	end component;
 
-component Shifter32 	
+component Shifter32 
 Port(
 inp: in STD_LOGIC_VECTOR(31 downto 0);
 outp: out STD_LOGIC_VECTOR (31 downto 0)
 
-); end component ;
+);
+end component ;
+
+component Shifter25 
+Port(
+	inp: in STD_LOGIC_VECTOR(31 downto 0);
+	PCPlus4D: in STD_LOGIC_VECTOR (31 downto 0);
+	outp: out STD_LOGIC_VECTOR (31 downto 0)
+
+);
+end component ;
+
 component Latch	
 	generic(width: integer);
 	port(
@@ -182,13 +194,18 @@ signal ALUOutE: std_logic_vector(31 downto 0);
 signal RdE: std_logic_vector(4 downto 0);	
 signal notstallF, notStallD: std_logic;
 --WriteBack Stage Signals
-signal ResultW, ReadDataW,ALUOutW: std_logic_vector(31 downto 0);	 
+signal ResultW, ReadDataW,ALUOutW: std_logic_vector(31 downto 0);	  
+signal JumpPC: std_logic_vector(31 downto 0);
+signal JPCSrcD: std_logic;
 
 						
 begin
-	notstallF <= not stallF; 
-	--Fetch Stage
-	PCMux : Mux2 Generic map (32) port map (PCSrcD,PCPlus4F,PCBranchD,PC);
+	notstallF <= not stallF; 	   
+	JPCSrcD <= PCSrcD(0) or PCSrcD(1);
+	
+	--Fetch Stage  
+	JumpShift: Shifter25 port map (instrD,PCPlus4D,JumpPC);
+	PCMux : Mux4 generic map (32) port map (PCSrcD,PCPlus4F,PCBranchD,JumpPC,x"00000000",PC);
 	PCLatch: Latch generic map (32) port map (clk, reset,notstallF, PC, PCF); 
 	PCAdder: Adder port map (PCF, x"00000004", PCPlus4F);
 	
@@ -206,7 +223,7 @@ begin
 	Equ: Equator port map (EqSrcA,EqSrcB,EqualD); 
 	Reg_File: RegFile port map (clk,WE3,A1,A2,A3,WD3,RD1,RD2);
 	Sign_Extend: Signext port map (SignExIn,SignImmD);	
-	Latch_Decode: LatchD port map (clk,reset,PCSrcD,notStallD,InstrRD,PCPlus4F,InstrD,PCPlus4D);
+	Latch_Decode: LatchD port map (clk,reset,JPCSrcD,notStallD,InstrRD,PCPlus4F,InstrD,PCPlus4D);
 	Shifter: Shifter32 port map (SignImmD,AdderSrcA);
 	AdderD: Adder port map (AdderSrcA,PCPlus4D,PCBranchD);
 	

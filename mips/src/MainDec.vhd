@@ -7,7 +7,7 @@ entity MainDec is
 	op: in std_logic_vector (5 downto 0);	
 	
 	--Output
-	RegWrite, MemToReg, MemWrite, ALUSrc, RegDst, Branch: out std_logic;
+	RegWrite, MemToReg, MemWrite, ALUSrc, RegDst, Branch, Jump: out std_logic;
 	ALUOp: out std_logic_vector (1 downto 0)
 	);
 end;
@@ -34,11 +34,11 @@ begin
 
 	--Set control signals	 
 	regwrite <= controls(8);											
-	regdst <= controls(7);
-	alusrc <= controls(6);
-	branch <= controls(5);
+	regdst   <= controls(7);
+	alusrc   <= controls(6);
+	branch   <= controls(5);
 	memwrite <= controls(4);
 	memtoreg <= controls(3);
-	--jump <= controls(2);
-	aluop <= controls(1 downto 0);
+	Jump     <= controls(2);
+	aluop    <= controls(1 downto 0);
 end;

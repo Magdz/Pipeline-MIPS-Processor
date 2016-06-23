@@ -20,7 +20,7 @@ entity HazardUnit is
 	--Stall Detection Logic			
 	RegWriteE, MemtoRegM: in std_logic;
 	WriteRegE: in std_logic_vector(4 downto 0);
-	branchD : in std_logic
+	branchD, JumpD: in std_logic
 	);
 	
 end;
@@ -72,7 +72,7 @@ begin
 						   else '0';
 	stallD <= (lwstall or branchstall);
 	stallF <= stallD;
-	flushE <= stallD;
+	flushE <= stallD or JumpD;
 	
 	--Decode Stage Forwarding
 	forwardaD <= '1' when ((rsD /= "00000") and (rsD = writeregM) and

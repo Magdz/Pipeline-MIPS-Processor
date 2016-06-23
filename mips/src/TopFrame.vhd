@@ -35,7 +35,8 @@ component Mips
 	DataA:  out std_logic_vector(31 downto 0);
 	WD: out std_logic_vector(31 downto 0);
 	DataRd: in std_logic_vector(31 downto 0);
-	WE: out std_logic
+	WE: out std_logic;
+	MemWriteM: buffer std_logic
 	);	
 
 end component;					
@@ -49,8 +50,9 @@ signal InstrRD: std_Logic_vector (31 downto 0);
 
 begin
 	instmem: Imem port map (PCF, InstrRD);
-	mps    : Mips port map (clk, reset, PCF, InstrRD, ALUOutM, WriteDataM, dataRD, WE);
+	mps    : Mips port map (clk, reset, PCF, InstrRD, ALUOutM, WriteDataM, dataRD, WE, MemWrite);
 	datamem: Dmem port map (clk, WE, Adr, dataRD, WD); 
+	
 	
 	WD <= WriteDataM;
 	Adr <= ALUOutM;
